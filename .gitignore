@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+build/
+.npm/
+.pnpm-store/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Runtime storage
+storage/raw/*
+storage/standard/*
+storage/exports/*
+storage/uploads/product-images/*
+storage/uploads/mapping-imports/*
+!storage/raw/.gitkeep
+!storage/standard/.gitkeep
+!storage/exports/.gitkeep
+!storage/uploads/product-images/.gitkeep
+!storage/uploads/mapping-imports/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
