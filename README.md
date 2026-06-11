@@ -165,4 +165,9 @@ storage/workspaces/
 - [面单驱动设计原则](docs/WAYBILL_DRIVEN_DESIGN.md)
 - [配置归属与隔离原则](docs/CONFIG_SCOPE.md)
 
+阶段文档：
+
+- [当前进度报告](docs/CURRENT_PROGRESS_REPORT.md)
+- [下一阶段任务书](docs/NEXT_PHASE_TASKBOOK.md)
+
 如果文档之间出现冲突，以 `docs/CODEX_TASKBOOK.md` 为准。
