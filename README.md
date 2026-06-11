@@ -96,6 +96,63 @@ Excel 导出引擎
 - 图片处理：Pillow
 - 部署：Windows 优先，后续兼容 Docker
 
+## 开发启动
+
+准备环境：
+
+```text
+Python 3.12+
+Node.js 20+
+MySQL 8+
+Redis 7+
+```
+
+初始化配置：
+
+```powershell
+copy .env.example .env
+mysql -u root -p < scripts/init_db.sql
+```
+
+启动后端：
+
+```powershell
+scripts\start_backend.bat
+```
+
+后端 OpenAPI：
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+启动前端：
+
+```powershell
+scripts\start_frontend_dev.bat
+```
+
+前端地址：
+
+```text
+http://127.0.0.1:5173
+```
+
+默认开发账号：
+
+```text
+用户名：admin
+密码：admin123
+```
+
+文件存储目录：
+
+```text
+storage/workspaces/
+```
+
+当前第一版骨架使用内存数据服务，保证前后端和 OpenAPI 可以先启动；MySQL Repository 和持久化会在下一阶段接入。
+
 ## 文档
 
 主任务书：

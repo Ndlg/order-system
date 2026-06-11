@@ -31,16 +31,8 @@ build/
 logs/
 
 # Runtime storage
-storage/raw/*
-storage/standard/*
-storage/exports/*
-storage/uploads/product-images/*
-storage/uploads/mapping-imports/*
-!storage/raw/.gitkeep
-!storage/standard/.gitkeep
-!storage/exports/.gitkeep
-!storage/uploads/product-images/.gitkeep
-!storage/uploads/mapping-imports/.gitkeep
+storage/workspaces/*
+!storage/workspaces/.gitkeep
 
 # OS
 .DS_Store
