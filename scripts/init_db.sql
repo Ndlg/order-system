@@ -55,6 +55,78 @@ CREATE TABLE IF NOT EXISTS user_workspaces (
   UNIQUE KEY uk_user_workspace (workspace_id, user_id)
 );
 
+CREATE TABLE IF NOT EXISTS collectors (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  workspace_id BIGINT NOT NULL,
+  collector_id VARCHAR(128) NOT NULL,
+  collector_name VARCHAR(128) NOT NULL,
+  source_machine VARCHAR(128) NULL,
+  client_version VARCHAR(64) NULL,
+  online_status VARCHAR(32) NOT NULL DEFAULT 'offline',
+  last_heartbeat_at VARCHAR(64) NULL,
+  remark TEXT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by BIGINT NULL,
+  updated_by BIGINT NULL,
+  is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+  INDEX idx_collectors_workspace (workspace_id)
+);
+
+CREATE TABLE IF NOT EXISTS capture_tasks (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  workspace_id BIGINT NOT NULL,
+  name VARCHAR(128) NOT NULL,
+  collector_id BIGINT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'pending',
+  config JSON NULL,
+  remark TEXT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by BIGINT NULL,
+  updated_by BIGINT NULL,
+  is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+  INDEX idx_capture_tasks_workspace (workspace_id)
+);
+
+CREATE TABLE IF NOT EXISTS capture_batches (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  workspace_id BIGINT NOT NULL,
+  task_id BIGINT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'pending',
+  record_count INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by BIGINT NULL,
+  updated_by BIGINT NULL,
+  is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+  INDEX idx_capture_batches_workspace (workspace_id)
+);
+
+CREATE TABLE IF NOT EXISTS raw_capture_records (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  workspace_id BIGINT NOT NULL,
+  capture_batch_id BIGINT NULL,
+  task_id BIGINT NULL,
+  document_id VARCHAR(128) NULL,
+  collector_id BIGINT NULL,
+  source_machine VARCHAR(128) NULL,
+  source_index VARCHAR(128) NULL,
+  waybill_mode VARCHAR(128) NULL,
+  payload_format VARCHAR(32) NOT NULL DEFAULT 'unknown',
+  raw_payload LONGTEXT NOT NULL,
+  source_columns JSON NULL,
+  parsed_payload JSON NULL,
+  standard_detail_id BIGINT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'pending',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by BIGINT NULL,
+  updated_by BIGINT NULL,
+  is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+  INDEX idx_raw_capture_records_workspace (workspace_id)
+);
+
 CREATE TABLE IF NOT EXISTS waybill_modes (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   workspace_id BIGINT NOT NULL,
@@ -87,6 +159,22 @@ CREATE TABLE IF NOT EXISTS waybill_templates (
   updated_by BIGINT NULL,
   is_deleted TINYINT(1) NOT NULL DEFAULT 0,
   INDEX idx_waybill_templates_workspace (workspace_id)
+);
+
+CREATE TABLE IF NOT EXISTS waybill_template_fields (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  workspace_id BIGINT NOT NULL,
+  waybill_template_id BIGINT NOT NULL,
+  target_field_code VARCHAR(64) NOT NULL,
+  extraction_type VARCHAR(32) NOT NULL,
+  extraction_config JSON NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by BIGINT NULL,
+  updated_by BIGINT NULL,
+  is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+  INDEX idx_waybill_template_fields_workspace (workspace_id)
 );
 
 CREATE TABLE IF NOT EXISTS standard_detail_batches (
@@ -145,6 +233,22 @@ CREATE TABLE IF NOT EXISTS field_definitions (
   updated_by BIGINT NULL,
   is_deleted TINYINT(1) NOT NULL DEFAULT 0,
   UNIQUE KEY uk_field_definitions_workspace_code (workspace_id, code)
+);
+
+CREATE TABLE IF NOT EXISTS field_role_configs (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  workspace_id BIGINT NOT NULL,
+  waybill_mode_id BIGINT NULL,
+  field_definition_id BIGINT NOT NULL,
+  role_code VARCHAR(64) NOT NULL,
+  config JSON NULL,
+  is_enabled TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by BIGINT NULL,
+  updated_by BIGINT NULL,
+  is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+  INDEX idx_field_role_configs_workspace (workspace_id)
 );
 
 CREATE TABLE IF NOT EXISTS key_field_sets (
@@ -225,6 +329,22 @@ CREATE TABLE IF NOT EXISTS report_batches (
   updated_by BIGINT NULL,
   is_deleted TINYINT(1) NOT NULL DEFAULT 0,
   INDEX idx_report_batches_workspace (workspace_id)
+);
+
+CREATE TABLE IF NOT EXISTS report_lines (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  workspace_id BIGINT NOT NULL,
+  report_batch_id BIGINT NOT NULL,
+  field_values JSON NOT NULL,
+  quantity VARCHAR(64) NULL,
+  image_asset_id BIGINT NULL,
+  stall_id BIGINT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by BIGINT NULL,
+  updated_by BIGINT NULL,
+  is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+  INDEX idx_report_lines_workspace (workspace_id)
 );
 
 CREATE TABLE IF NOT EXISTS exception_records (

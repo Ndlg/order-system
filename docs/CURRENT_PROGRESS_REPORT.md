@@ -2,7 +2,7 @@
 
 > 报告日期：2026-06-11  
 > 当前阶段：平台骨架阶段完成  
-> 最新提交：`b188639 chore: scaffold platform application`
+> 报告基线：`b188639 chore: scaffold platform application`
 
 ## 总体结论
 
@@ -239,3 +239,77 @@ OpenAPI：完成
 P0 业务闭环：未完成
 ```
 
+## 2026-06-11 追加进展：持久化基础层
+
+本轮已开始推进下一阶段“数据库持久化与平台基础能力”。
+
+已新增：
+
+```text
+SQLAlchemy 数据库连接
+SQLAlchemy Base / 公共 mixin
+第一批 ORM 模型
+Repository 基类
+workspace_id 查询过滤
+JWT 生成与解析
+PBKDF2 密码哈希
+当前用户上下文
+当前 workspace 请求头解析
+开发环境自动建表与种子数据
+数据库版登录接口
+数据库版通用资源接口
+后端 foundation 测试
+前端 API token / X-Workspace-Id 请求头
+```
+
+已覆盖的 ORM 模型：
+
+```text
+Workspace
+User
+Role
+UserWorkspace
+Collector
+CaptureTask
+CaptureBatch
+RawCaptureRecord
+WaybillMode
+WaybillTemplate
+WaybillTemplateField
+StandardDetailBatch
+StandardDetail
+FieldDefinition
+FieldRoleConfig
+KeyFieldSet
+MatchRule
+Stall
+ImageAsset
+ReportBatch
+ReportLine
+ExceptionRecord
+ExportRecord
+OperationLog
+```
+
+新增验证：
+
+```text
+pytest backend/tests -q 通过
+Python compileall backend/app collector-client 通过
+SQLite 临时库自动建表通过
+admin 登录获取 JWT 通过
+/auth/me 返回用户和 workspace 通过
+创建 field-definitions 记录通过
+Repository 自动写入 workspace_id 通过
+```
+
+当前仍未完成：
+
+```text
+明确资源服务替代通用资源接口
+更细的角色权限策略
+MySQL 实例上的实际联调
+图片上传接口和文件 hash
+前端工作空间选择 UI
+前端配置页面细化
+```

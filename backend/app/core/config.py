@@ -1,7 +1,17 @@
 from functools import lru_cache
 import os
+from pathlib import Path
 
 from pydantic import BaseModel
+
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - dependency is provided by requirements.
+    load_dotenv = None
+
+
+if load_dotenv is not None:
+    load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 
 
 class Settings(BaseModel):
@@ -13,6 +23,9 @@ class Settings(BaseModel):
     redis_url: str = "redis://127.0.0.1:6379/0"
     storage_root: str = "storage/workspaces"
     default_workspace_id: int = 1
+    secret_key: str = "change-me-in-production"
+    access_token_expire_minutes: int = 480
+    auto_create_tables: bool = False
 
 
 def _split_csv(value: str) -> list[str]:
@@ -31,4 +44,7 @@ def get_settings() -> Settings:
         redis_url=os.getenv("REDIS_URL", Settings.model_fields["redis_url"].default),
         storage_root=os.getenv("STORAGE_ROOT", Settings.model_fields["storage_root"].default),
         default_workspace_id=int(os.getenv("DEFAULT_WORKSPACE_ID", "1")),
+        secret_key=os.getenv("SECRET_KEY", Settings.model_fields["secret_key"].default),
+        access_token_expire_minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "480")),
+        auto_create_tables=os.getenv("AUTO_CREATE_TABLES", "false").lower() in {"1", "true", "yes"},
     )

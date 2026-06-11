@@ -3,9 +3,13 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1'
 export type ApiRecord = Record<string, unknown>
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = localStorage.getItem('order-system-token')
+  const workspaceId = localStorage.getItem('order-system-workspace-id') ?? '1'
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      'X-Workspace-Id': workspaceId,
       ...(init?.headers ?? {}),
     },
     ...init,
