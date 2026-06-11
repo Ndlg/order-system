@@ -4,9 +4,9 @@
 
 ## 核心结论
 
-系统面向多个用户，但不按店铺隔离数据，也不以店铺作为业务主线。
+系统面向多个用户，但不按任何预设业务对象隔离数据，也不以任何预设业务对象作为整理主线。
 
-不同用户维护不同规则、鞋款定义、规格映射、图片绑定、档口归属和导出配置。因此，所有可变业务配置必须挂在 `workspace_id` 下。
+不同用户维护不同字段定义、关键字段组合、图片匹配、档口匹配和导出配置。因此，所有可变业务配置必须挂在 `workspace_id` 下。
 
 ```text
 User
@@ -15,7 +15,7 @@ Workspace
   ↓
 Waybill Mode
   ↓
-Field Roles / Mappings / Images / Stalls / Reports / Exports
+Field Definitions / Key Fields / Match Rules / Images / Stalls / Reports / Exports
 ```
 
 ## 工作空间是什么
@@ -30,10 +30,11 @@ Field Roles / Mappings / Images / Stalls / Reports / Exports
 面单模式
 面单模板
 标准化明细
+面单字段定义
 字段角色配置
-业务简称 / 鞋款简称映射
-规格映射
-图片绑定
+关键字段组合
+关键字段匹配规则
+图片信息
 档口资料
 报货批次
 导出记录
@@ -41,33 +42,27 @@ Field Roles / Mappings / Images / Stalls / Reports / Exports
 操作日志
 ```
 
-## 店铺字段的定位
+## 面单字段的定位
 
-标准化明细里可能出现：
+标准化明细里的业务字段全部来自用户上传 Excel 表头、面单模板提取规则或用户手工定义。
 
-```text
-店铺名
-淘宝店铺名
-抖店店铺名
-来源店铺
-```
-
-这些都只是普通字段。
-
-它们可以用于：
+这些字段可以用于：
 
 ```text
 展示
 筛选
 导出
+关键字段匹配
+图片匹配
+档口匹配
 用户自定义分组
 辅助备注
 ```
 
-但不能用于：
+但不能作为系统预设的：
 
 ```text
-系统一级对象
+一级对象
 数据隔离边界
 固定整理主线
 必须字段
@@ -83,11 +78,12 @@ waybill_modes
 waybill_templates
 standard_detail_batches
 standard_details
+field_definitions
 field_role_configs
-product_alias_mappings
-spec_mappings
+key_field_sets
+match_rules
 stalls
-product_images
+image_assets
 report_batches
 report_lines
 exception_records
@@ -104,34 +100,20 @@ collectors
 以下配置不能做成全局唯一规则，必须属于具体 workspace：
 
 ```text
+面单字段定义
 字段角色配置
-业务简称 / 鞋款简称映射
-规格映射
-商品图片绑定
-档口归属
+关键字段组合
+图片匹配规则
+档口匹配规则
 导出配置
 异常修正规则
 ```
 
-示例：
-
-```text
-用户A / 工作空间A：
-  ac -> ACG
-  5.0 -> 5.0
-  炭黑 -> 二代炭黑
-
-用户B / 工作空间B：
-  ac -> 用户B自己的定义
-  5.0 -> 用户B自己的分类
-  炭黑 -> 用户B自己的规格名称
-```
-
-两个 workspace 的配置互不影响。
+不同 workspace 的配置互不影响。
 
 ## 共享规则的正确方式
 
-如果多个用户要维护同一套规则，不要按店铺共享，也不要写成全局规则。
+如果多个用户要维护同一套规则，不要写成全局规则。
 
 正确方式：
 
@@ -152,9 +134,9 @@ collectors
 ```text
 禁止使用 shop_id 作为核心隔离字段。
 禁止创建 shops 表作为业务主表。
-禁止把店铺名做成系统一级对象。
-禁止把鞋款简称映射做成全局唯一规则。
-禁止把规格映射做成全局唯一规则。
+禁止把用户业务对象做成系统一级固定对象。
+禁止把字段定义做成全局唯一规则。
+禁止把关键字段匹配规则做成全局唯一规则。
 禁止不同 workspace 共用同一套可变业务配置。
 禁止用户跨 workspace 查询、导出、下载、修改数据。
 ```
