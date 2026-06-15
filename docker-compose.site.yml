@@ -1,0 +1,30 @@
+services:
+  backend:
+    container_name: order-system-backend
+    image: order-system-backend:latest
+    environment:
+      CORS_ORIGINS: http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:5174,http://localhost:5174
+    ports: !override
+      - "127.0.0.1:8000:8000"
+    volumes: !override
+      - order-system-data:/data
+
+  redis:
+    container_name: order-system-redis
+
+  tenant-ui:
+    container_name: order-system-tenant-ui
+    image: order-system-tenant-ui:latest
+    ports: !override
+      - "0.0.0.0:5173:80"
+
+  platform-admin-ui:
+    container_name: order-system-platform-admin-ui
+    image: order-system-platform-admin-ui:latest
+    ports: !override
+      - "127.0.0.1:5174:80"
+
+volumes:
+  order-system-data:
+    external: true
+    name: order-system-data
